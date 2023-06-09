@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- This file demonstrates the use of some <gazebo> tags -->
+
+    <!-- To include it add the following line -->
+    <!-- <xacro:include filename="example_gazebo.xacro" /> -->
+
+
+
+    <!-- Gazebo is unable to use the same <material> tags that are already in the URDF (that RViz uses). -->
+    <!-- Instead, we need to add gazebo tags for our links that refer to Gazebo materials -->
+
+
+    <gazebo reference="prisma_link">
+        <material>Gazebo/Green</material>
+    </gazebo>
+
+    <gazebo reference="cam_link">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="base_cam_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
+    <gazebo reference="base_link">
+        <material>Gazebo/White</material>
+    </gazebo>
+
+    <gazebo reference="der_atras_link">
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="izq_atras_link">
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="der_del_link">
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="izq_del_link">
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+
+    <gazebo reference="base_link">
+        <mu1>200</mu1>
+        <mu2>200</mu2>
+        <kp>100000</kp>
+        <kd>1</kd>
+    </gazebo>
+
+    <gazebo reference="prisma_link">
+        <mu1>200</mu1>
+        <mu2>200</mu2>
+        <kp>100000</kp>
+        <kd>1</kd>
+    </gazebo>
+
+    <gazebo reference="cam_link">
+        <mu1>200</mu1>
+        <mu2>200</mu2>
+        <kp>100000</kp>
+        <kd>1</kd>
+    </gazebo>
+
+    <gazebo reference="base_cam_link">
+        <mu1>200</mu1>
+        <mu2>200</mu2>
+        <kp>100000</kp>
+        <kd>1</kd>
+    </gazebo>
+
+    <gazebo reference="der_atras_link">
+        <mu1>200</mu1>
+        <mu2>200</mu2>
+        <kp>1000000</kp>
+        <kd>1</kd>
+    </gazebo>
+
+    <gazebo reference="izq_atras_link">
+        <mu1>200</mu1>
+        <mu2>200</mu2>
+        <kp>100000</kp>
+        <kd>1</kd>
+    </gazebo>
+
+    <gazebo reference="der_del_link">
+        <mu1>200</mu1>
+        <mu2>200</mu2>
+        <kp>1000000</kp>
+        <kd>1</kd>
+    </gazebo>
+
+    <gazebo reference="izq_del_link">
+        <mu1>200</mu1>
+        <mu2>200</mu2>
+        <kp>100000</kp>
+        <kd>1</kd>
+    </gazebo>
+    <!-- Gazebo requires the use of plugins to interact with other systems such as ROS. -->
+
+
+    <!-- This plugin will publish the joint_states for the selected joints 
+            (which robot_state_publisher can then use to broadcast the approprate tf). -->
+
+    <gazebo>
+        <plugin name="gazebo_ros_joint_state_publisher"
+            filename="libgazebo_ros_joint_state_publisher.so">
+            <update_rate>20</update_rate>
+            <joint_name>prisma_joint</joint_name>
+            <joint_name>base_cam_joint</joint_name>
+            <joint_name>cam_joint</joint_name>
+            <joint_name>der_del_joint</joint_name>
+            <joint_name>izq_del_joint</joint_name>
+            <joint_name>izq_atras_joint</joint_name>
+            <joint_name>der_atras_joint</joint_name>
+        </plugin>
+    </gazebo>
+
+
+    <gazebo>
+        <plugin name="gazebo_ros_joint_pose_trajectory"
+            filename="libgazebo_ros_joint_pose_trajectory.so">
+            <update_rate>2</update_rate>
+        </plugin>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+            <controlPeriod>0.001</controlPeriod>
+            <legacyModeNS>false</legacyModeNS>
+        </plugin>
+    </gazebo>
+
+
+    <gazebo reference="cam_link">
+        <sensor type="depth" name="my_camera">
+            <update_rate>20</update_rate>
+            <visualize>true</visualize>
+            <camera name="cam">
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8B8G8</format>
+                </image>
+                <clip>
+                    <near>0.08</near>
+                    <far>300</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <frame_name>cam_link</frame_name>
+                <min_depth>0.1</min_depth>
+                <max_depth>500</max_depth>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+   <gazebo>
+        <plugin name="two_wheeled_robot_diff_drive" filename="libgazebo_ros_diff_drive.so">
+
+            <!-- limits -->
+            <max_wheel_torque>20</max_wheel_torque>
+            <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+            <!-- output -->
+            <publish_odom>true</publish_odom>
+            <publish_odom_tf>true</publish_odom_tf>
+            <publish_wheel_tf>true</publish_wheel_tf>
+
+            <odometryTopic>odom</odometryTopic>
+            <robot_base_frame>base_link</robot_base_frame>
+            <odometryFrame>odom</odometryFrame>
+            <commandTopic>cmd_vel</commandTopic>
+        </plugin>
+    </gazebo>
+
+
+</robot>
